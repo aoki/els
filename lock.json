@@ -1,5 +1,5 @@
 {
-    "memo": "8dfe6e8ac2760490bd68b3da1985df0d705270296436ac0d878a8e43068bb69e",
+    "memo": "a2ac6a2c154cbbace3001cb6771cbbc51b0131fed1ee633309a832e05a3fd0ec",
     "projects": [
         {
             "name": "github.com/aws/aws-sdk-go",
@@ -23,6 +23,22 @@
             "name": "github.com/jmespath/go-jmespath",
             "version": "0.2.2",
             "revision": "3433f3ea46d9f8019119e7dd41274e112a2359a9",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/mattn/go-runewidth",
+            "version": "v0.0.2",
+            "revision": "9e777a8366cce605130a531d2cd6363d07ad7317",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/olekukonko/tablewriter",
+            "branch": "master",
+            "revision": "febf2d34b54a69ce7530036c7503b1c9fbfdf0bb",
             "packages": [
                 "."
             ]

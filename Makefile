@@ -1,5 +1,5 @@
 NAME			:= els
-VERSION		:= v0.1.0
+VERSION		:= v0.2.0
 REVISION	:= $(shell git rev-parse --short HEAD)
 
 SRCS		:= $(shell find src -type f -name '*.go')
@@ -18,7 +18,7 @@ init:
 	dep init
 
 .PHONY: deps
-deps: dep
+deps:
 	dep ensure -update
 
 bin/$(NAME): $(SRCS)
@@ -27,13 +27,38 @@ bin/$(NAME): $(SRCS)
 .PHONY: install
 install:
 	go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o ${GOPATH}/bin/$(NAME)
-	#go install $(LDFLAGS) -o hello
 
-.PHONY: imports
-imports:
-	# if you want to install goimports
-	# `go get golang.org/x/tools/cmd/goimports`
-ifeq ($(shell command -v goimports 2> /dev/null),)
-	go get -u github.com/golang/dep/...
-endif
-	goimports -w *.go
+.PHONY: cross-build
+cross-build: deps
+	@for os in darwin linux windows; do \
+		for arch in amd64 386; do \
+			printf "Building for $${os} $${arch}\n";\
+			GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o dist/$$os-$$arch/$(NAME)  $(SRCS); \
+		done; \
+	done
+
+
+.PHONEY: release
+INPUT := {\"tag_name\": \"$(VERSION)\", \"target_commitish\": \"master\", \"draft\": false, \"prerelease\": false }
+release: dist
+	@printf "Generate artifacts\n"
+	@mkdir -p artifact
+	@\ls dist | xargs -IXXX zip -j artifact/$(NAME)_XXX.zip dist/XXX/$(NAME)
+	@\ls dist | xargs -IXXX tar czf artifact/$(NAME)_XXX.tar.gz -C dist/XXX $(NAME)
+	@printf "Create relese $(VERSION)\n"
+	$(eval RELEASE_ID := $(shell curl --fail -s -X POST https://api.github.com/repos/$(GITHUB_USER)/ec2ls/releases \
+		-H "Accept: application/vnd.github.v3+json" \
+		-H  "Authorization: token $(GITHUB_TOKEN)" \
+		-H "Content-Type: application/json" \
+		-d "$(INPUT)" | tr ',' '\n' | grep id | head -1 | cut -d':' -f2 | tr -d ' '))
+	$(eval RELEASE_ID := 5789241)
+	@for ARCHIVE in $$(\ls -ld1 $(PWD)/artifact/*); do \
+		echo $${ARCHIVE}; \
+		ARCHIVE_NAME=$$(basename $${ARCHIVE}); \
+		CONTENT_TYPE=$$(file --mime-type -b $${ARCHIVE}); \
+		curl --fail -X POST https://uploads.github.com/repos/$(GITHUB_USER)/ec2ls/releases/$(RELEASE_ID)/assets?name=$${ARCHIVE_NAME} \
+			-H "Accept: application/vnd.github.v3+json" \
+			-H "Authorization: token $(GITHUB_TOKEN)" \
+			-H "Content-Type: $${CONTENT_TYPE}" \
+			--data-binary @"$${ARCHIVE}"; \
+	done

@@ -28,8 +28,8 @@ bin/$(NAME): $(SRCS)
 install:
 	go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o ${GOPATH}/bin/$(NAME)
 
-.PHONY: cross-build
-cross-build: deps
+.PHONY: dist
+dist: deps
 	@for os in darwin linux windows; do \
 		for arch in amd64 386; do \
 			printf "Building for $${os} $${arch}\n";\

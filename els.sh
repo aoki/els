@@ -18,6 +18,6 @@ if [[ -e ${CACHE_FILE} ]]; then
   printf "\e[31mThis results is using cache. If you want to updating cache, use -r or --renew option.\n\e[m" 1>&2
 else
   aws ec2 describe-instances --filter "Name=instance-state-name,Values=running" | \
-    jq -r '.Reservations[].Instances[] | (.Tags | select(. != null) | from_entries | select(.Environment != null) | {env: (.Environment), role: (.Role), name: (.Name)}) + {private: (.PrivateIpAddress), public: (.PublicIpAddress), type: (.InstanceType)} |  to_entries| [.[].value] | ., (["Env", "Role", "Name", "PrivateIP", "PublicIP", "InstanceType"]) | @sh' | \
+    jq -r '.Reservations[].Instances[] | (.Tags | select(. != null) | from_entries | select(.Environment != null) | {env: (.Environment), role: (.Role), name: (.Name)}) + {private: (.PrivateIpAddress), public: (.PublicIpAddress), type: (.InstanceType)} |  to_entries| [.[].value] | ., (["Environment", "Role", "Name", "PrivateIP", "PublicIP", "InstanceType"]) | @sh' | \
     sed -e s/\'//g | column -t | sort  | uniq | tee ${CACHE_FILE}
 fi

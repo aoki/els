@@ -62,3 +62,7 @@ release: dist
 			-H "Content-Type: $${CONTENT_TYPE}" \
 			--data-binary @"$${ARCHIVE}"; \
 	done
+
+.PHONEY: clean
+clean:
+	rm -rf artifact dist bin

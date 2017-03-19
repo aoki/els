@@ -46,7 +46,7 @@ release: dist
 	@\ls dist | xargs -IXXX zip -j artifact/$(NAME)_XXX.zip dist/XXX/$(NAME)
 	@\ls dist | xargs -IXXX tar czf artifact/$(NAME)_XXX.tar.gz -C dist/XXX $(NAME)
 	@printf "Create relese $(VERSION)\n"
-	$(eval RELEASE_ID := $(shell curl --fail -s -X POST https://api.github.com/repos/$(GITHUB_USER)/ec2ls/releases \
+	$(eval RELEASE_ID := $(shell curl --fail -s -X POST https://api.github.com/repos/$(GITHUB_USER)/$(NAME)/releases \
 		-H "Accept: application/vnd.github.v3+json" \
 		-H  "Authorization: token $(GITHUB_TOKEN)" \
 		-H "Content-Type: application/json" \
@@ -56,7 +56,7 @@ release: dist
 		echo $${ARCHIVE}; \
 		ARCHIVE_NAME=$$(basename $${ARCHIVE}); \
 		CONTENT_TYPE=$$(file --mime-type -b $${ARCHIVE}); \
-		curl --fail -X POST https://uploads.github.com/repos/$(GITHUB_USER)/ec2ls/releases/$(RELEASE_ID)/assets?name=$${ARCHIVE_NAME} \
+		curl --fail -X POST https://uploads.github.com/repos/$(GITHUB_USER)/$(NAME)/releases/$(RELEASE_ID)/assets?name=$${ARCHIVE_NAME} \
 			-H "Accept: application/vnd.github.v3+json" \
 			-H "Authorization: token $(GITHUB_TOKEN)" \
 			-H "Content-Type: $${CONTENT_TYPE}" \

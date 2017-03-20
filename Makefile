@@ -33,7 +33,7 @@ dist: deps
 	@for os in darwin linux windows; do \
 		for arch in amd64 386; do \
 			printf "Building for $${os} $${arch}\n";\
-			GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o dist/$$os-$$arch/$(NAME)  $(SRCS); \
+			GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o dist/$$os-$$arch/$(NAME) $(SRCS); \
 		done; \
 	done
 
@@ -51,9 +51,8 @@ release: dist
 		-H  "Authorization: token $(GITHUB_TOKEN)" \
 		-H "Content-Type: application/json" \
 		-d "$(INPUT)" | tr ',' '\n' | grep id | head -1 | cut -d':' -f2 | tr -d ' '))
-	$(eval RELEASE_ID := 5789241)
 	@for ARCHIVE in $$(\ls -ld1 $(PWD)/artifact/*); do \
-		echo $${ARCHIVE}; \
+		echo $(RELEASE_ID); \
 		ARCHIVE_NAME=$$(basename $${ARCHIVE}); \
 		CONTENT_TYPE=$$(file --mime-type -b $${ARCHIVE}); \
 		curl --fail -X POST https://uploads.github.com/repos/$(GITHUB_USER)/$(NAME)/releases/$(RELEASE_ID)/assets?name=$${ARCHIVE_NAME} \

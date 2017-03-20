@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"os"
 	"sort"
 
@@ -10,7 +12,34 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
+var (
+	Version  string
+	Revision string
+)
+
+var (
+	v *bool
+)
+
+func parseFlags() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, `
+Usage of %s:
+ %s [OPTIONS] ARGS...
+Options
+`, os.Args[0], os.Args[0])
+		flag.PrintDefaults()
+	}
+	v = flag.Bool("v", false, "Display the command version")
+	flag.Parse()
+}
+
 func main() {
+	parseFlags()
+	if *v {
+		fmt.Println(Version)
+		os.Exit(0)
+	}
 	sess, err := session.NewSession()
 	if err != nil {
 		panic(err)

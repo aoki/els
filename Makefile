@@ -43,7 +43,7 @@ INPUT := {\"tag_name\": \"$(VERSION)\", \"target_commitish\": \"master\", \"draf
 release: dist
 	@printf "Generate artifacts\n"
 	@mkdir -p artifact
-	@\ls dist | xargs -IXXX zip -j artifact/$(NAME)_XXX.zip dist/XXX/$(NAME)
+	@\ls dist | xargs -IXXX zip -Xj artifact/$(NAME)_XXX.zip dist/XXX/$(NAME)
 	@\ls dist | xargs -IXXX tar czf artifact/$(NAME)_XXX.tar.gz -C dist/XXX $(NAME)
 	@printf "Create relese $(VERSION)\n"
 	$(eval RELEASE_ID := $(shell curl --fail -s -X POST https://api.github.com/repos/$(GITHUB_USER)/$(NAME)/releases \

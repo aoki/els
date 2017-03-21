@@ -1,5 +1,5 @@
 NAME			:= els
-VERSION		:= v0.2.1
+VERSION		:= v0.2.2
 REVISION	:= $(shell git rev-parse --short HEAD)
 
 SRCS		:= $(shell find src -type f -name '*.go')
@@ -20,6 +20,10 @@ init:
 .PHONY: deps
 deps:
 	dep ensure -update
+
+.PHONY: run
+run:
+	go run $(LDFLAGS) src/$(NAME).go
 
 bin/$(NAME): $(SRCS)
 	go build -a -tags netgo -installsuffix netgo $(LDFLAGS) -o bin/$(NAME) $(SRCS)

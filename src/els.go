@@ -18,7 +18,8 @@ var (
 )
 
 var (
-	v *bool
+	v        *bool
+	noHeader *bool
 )
 
 func parseFlags() {
@@ -31,6 +32,7 @@ Options
 		flag.PrintDefaults()
 	}
 	v = flag.Bool("v", false, "Display the command version")
+	noHeader = flag.Bool("no-header", false, "Hide the header")
 	flag.Parse()
 }
 
@@ -54,10 +56,11 @@ func main() {
 
 	var data [][]string
 	table := tablewriter.NewWriter(os.Stdout)
-
-	table.SetHeader([]string{
-		"Environment", "Role", "Name", "InstanceId", "InstanceType", "AZ",
-		"PrivateIP", "PublicIP", "Status"})
+	if !*noHeader {
+		table.SetHeader([]string{
+			"Environment", "Role", "Name", "InstanceId", "InstanceType", "AZ",
+			"PrivateIP", "PublicIP", "Status"})
+	}
 	for _, r := range resp.Reservations {
 		for _, i := range r.Instances {
 			// fmt.Println(i)

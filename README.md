@@ -4,7 +4,7 @@
 
 ## Installation
 
-Download binary from the latest release.
+Download binary from [the latest release](https://github.com/ringohub/els/releases).
 
 Or, using `homebrew` (Formula is [here](https://github.com/ringohub/homebrew-els).)
 

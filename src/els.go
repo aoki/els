@@ -76,16 +76,21 @@ func main() {
 					tagName = *t.Value
 				}
 			}
-			var publicIpAddress string
+			var publicIpAddress, privateIpAddress string
 			if i.PublicIpAddress == nil {
 				publicIpAddress = "-"
 			} else {
 				publicIpAddress = *i.PublicIpAddress
 			}
+			if i.PrivateIpAddress == nil {
+				privateIpAddress = "-"
+			} else {
+				privateIpAddress = *i.PrivateIpAddress
+			}
 			data = append(data, []string{
 				tagEnvironment, tagRole, tagName,
 				*i.InstanceId, *i.InstanceType, *i.Placement.AvailabilityZone,
-				*i.PrivateIpAddress, publicIpAddress, *i.State.Name})
+				privateIpAddress, publicIpAddress, *i.State.Name})
 		}
 	}
 	sort.Slice(data, func(i, j int) bool {

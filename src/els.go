@@ -18,8 +18,10 @@ var (
 )
 
 var (
-	v        *bool
-	noHeader *bool
+	v          *bool
+	showStatus *bool
+	showId     *bool
+	noHeader   *bool
 )
 
 func parseFlags() {
@@ -32,6 +34,8 @@ Options
 		flag.PrintDefaults()
 	}
 	v = flag.Bool("v", false, "Display the command version")
+	showStatus = flag.Bool("s", false, "Display the instance status column")
+	showId = flag.Bool("id", false, "Display the instance ID column")
 	noHeader = flag.Bool("no-header", false, "Hide the header")
 	flag.Parse()
 }
@@ -56,14 +60,26 @@ func main() {
 
 	var data [][]string
 	table := tablewriter.NewWriter(os.Stdout)
-	if !*noHeader {
-		table.SetHeader([]string{
-			"Environment", "Role", "Name", "InstanceId", "InstanceType", "AZ",
-			"PrivateIP", "PublicIP", "Status"})
+
+	var header []string
+	header = append(header, []string{"Environment", "Role", "Name"}...)
+	if *showId {
+		header = append(header, "InstanceId")
 	}
+	header = append(header, []string{"InstanceType", "AZ", "PrivateIP", "PublicIP"}...)
+	if *showStatus {
+		header = append(header, "Status")
+	}
+
+	if !*noHeader {
+		table.SetHeader(header)
+	}
+
 	for _, r := range resp.Reservations {
 		for _, i := range r.Instances {
 			// fmt.Println(i)
+			var record []string
+
 			var tagEnvironment, tagName, tagRole string
 			for _, t := range i.Tags {
 				if *t.Key == "Environment" {
@@ -76,7 +92,12 @@ func main() {
 					tagName = *t.Value
 				}
 			}
-			var publicIpAddress, privateIpAddress string
+
+			record = append(record, []string{tagEnvironment, tagRole, tagName}...)
+			if *showId {
+				record = append(record, *i.InstanceId)
+			}
+			var privateIpAddress, publicIpAddress string
 			if i.PublicIpAddress == nil {
 				publicIpAddress = "-"
 			} else {
@@ -87,10 +108,13 @@ func main() {
 			} else {
 				privateIpAddress = *i.PrivateIpAddress
 			}
-			data = append(data, []string{
-				tagEnvironment, tagRole, tagName,
-				*i.InstanceId, *i.InstanceType, *i.Placement.AvailabilityZone,
-				privateIpAddress, publicIpAddress, *i.State.Name})
+			record = append(record, []string{*i.InstanceType, *i.Placement.AvailabilityZone,
+				privateIpAddress, publicIpAddress}...)
+			if *showStatus {
+				record = append(record, *i.State.Name)
+			}
+
+			data = append(data, record)
 		}
 	}
 	sort.Slice(data, func(i, j int) bool {

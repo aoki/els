@@ -3,8 +3,8 @@
     "projects": [
         {
             "name": "github.com/aws/aws-sdk-go",
-            "version": "v1.7.9",
-            "revision": "695fe24acaf9afe80b0ce261d4637f42ba0b4c7d",
+            "version": "v1.8.0",
+            "revision": "2db5849d2939d93075d911138309a83235032bea",
             "packages": [
                 "aws",
                 "aws/session",

@@ -1,5 +1,5 @@
 NAME			:= els
-VERSION		:= v0.2.3
+VERSION		:= v0.3.0-SNAPSHOT
 REVISION	:= $(shell git rev-parse --short HEAD)
 
 SRCS		:= $(shell find src -type f -name '*.go')

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -33,8 +34,17 @@ Options
 `, os.Args[0], os.Args[0])
 		flag.PrintDefaults()
 	}
-
 	flag.Parse()
+}
+
+func spinner(delay time.Duration) {
+	fmt.Print("\033[?25l")
+	for {
+		for _, r := range `⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏` {
+			fmt.Printf("\r%c", r)
+			time.Sleep(delay)
+		}
+	}
 }
 
 func main() {
@@ -43,6 +53,9 @@ func main() {
 		fmt.Println(Version)
 		os.Exit(0)
 	}
+
+	go spinner(50 * time.Millisecond)
+
 	sess, err := session.NewSession()
 	if err != nil {
 		panic(err)
@@ -121,5 +134,6 @@ func main() {
 	table.SetBorder(false)
 	table.SetCenterSeparator("")
 	table.SetColumnSeparator("")
+	fmt.Print("\033[2K")
 	table.Render()
 }

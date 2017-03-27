@@ -18,10 +18,10 @@ var (
 )
 
 var (
-	v          *bool
-	showStatus *bool
-	showId     *bool
-	noHeader   *bool
+	v          = flag.Bool("v", false, "Display the command version")
+	showStatus = flag.Bool("s", false, "Display the instance status column")
+	showId     = flag.Bool("id", false, "Display the instance ID column")
+	noHeader   = flag.Bool("no-header", false, "Hide the header")
 )
 
 func parseFlags() {
@@ -33,10 +33,7 @@ Options
 `, os.Args[0], os.Args[0])
 		flag.PrintDefaults()
 	}
-	v = flag.Bool("v", false, "Display the command version")
-	showStatus = flag.Bool("s", false, "Display the instance status column")
-	showId = flag.Bool("id", false, "Display the instance ID column")
-	noHeader = flag.Bool("no-header", false, "Hide the header")
+
 	flag.Parse()
 }
 

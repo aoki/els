@@ -87,7 +87,6 @@ func main() {
 
 	for _, r := range resp.Reservations {
 		for _, i := range r.Instances {
-			// fmt.Println(i)
 			var record []string
 
 			var tagEnvironment, tagName, tagRole string
